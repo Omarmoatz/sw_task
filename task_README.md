@@ -5,7 +5,7 @@
 
 This role will be part of the Rightshero software development team.
 
-As a software engineer you are a part of a small but very efficient and multi-tasking team. 
+As a software engineer you are a part of a small but very efficient and multi-tasking team.
 
 The team is tasked with handling all the software aspects of our service.
 

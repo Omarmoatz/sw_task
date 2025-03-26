@@ -1,7 +1,7 @@
 volumes:
   sw_task_local_postgres_data: {}
   sw_task_local_postgres_data_backups: {}
-  
+
 
 services:
   django:

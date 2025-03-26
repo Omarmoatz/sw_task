@@ -1,65 +1,54 @@
-![alt text](https://rightshero.com/wp/wp-content/uploads/2024/04/RightsHero-Logo.png)
+# sw_task
 
+sw_task
 
-# Software Engineer Task Assessment
+[![Built with Cookiecutter Django](https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg?logo=cookiecutter)](https://github.com/cookiecutter/cookiecutter-django/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
-This role will be part of the Rightshero software development team.
+License: MIT
 
-As a software engineer you are a part of a small but very efficient and multi-tasking team. 
+## Settings
 
-The team is tasked with handling all the software aspects of our service.
+Moved to [settings](https://cookiecutter-django.readthedocs.io/en/latest/1-getting-started/settings.html).
 
-# The task
-The task will be a **project** and **AWS CloudFormation** template:
+## Basic Commands
 
-## [1] The project:
-A project contains one page have a 2 categories checkboxes
+### Setting Up Your Users
 
-- [ ] Category A
-- [ ] Category B
+- To create a **normal user account**, just go to Sign Up and fill out the form. Once you submit it, you'll see a "Verify Your E-mail Address" page. Go to your console to see a simulated email verification message. Copy the link into your browser. Now the user's email should be verified and ready to go.
 
-Unlimited subcategories of parent category (if it is hard to achieve the unlimited levels, you can set 3 levels hard-coded)
-Should use Ajax.
+- To create a **superuser account**, use this command:
 
-### Example
-- [ ] Category A
-- [ ] Category B
+      $ python manage.py createsuperuser
 
-If user select “Category B”
-The system will create another 2 checkboxes with
+For convenience, you can keep your normal user logged in on Chrome and your superuser logged in on Firefox (or similar), so that you can see how the site behaves for both kinds of users.
 
-- [ ] SUB Category B1
-- [ ] SUB Category B2
+### Type checks
 
-Selecting Sub Category B2 will create another 2 checkboxes
+Running type checks with mypy:
 
-- [ ] SUB SUB Category B2-1
-- [ ] SUB SUB Category B2-2
- And so on
+    $ mypy sw_task
 
+### Test coverage
 
-## [2] AWS CloudFormation
-An AWS CloudFormation template YAML file for:
-- Launch a t2.micro or t3.micro EC2 instance
-- Create IAM role with admin privileges
-- Attach the IAM role to the EC2 instance created earlier
-- Deploy the project on the EC2 instance
-- The instance should be accessable via SSH, HTTP and HTTPS protocols/ports
+To run the tests, check your test coverage, and generate an HTML coverage report:
 
+    $ coverage run -m pytest
+    $ coverage html
+    $ open htmlcov/index.html
 
-# Notes
-- We would be scoring for the below aspects of the assignment:
-- DB,Architecture /Code (preferred MVC pattern), Security, Git
-- You could use a framework to create the project from scratch (Django).
-- You should use MySQL or Postgresql Databases.
-- Please use one table design in the database for all categories and subs.
-- The code should contain comments with important information.
-- README file for run the project locally.
-- The **AWS CloudFormation** template file.
+#### Running tests with pytest
 
+    $ pytest
 
-# Deliverables
-- The project should be ready with docker compose (web service + DB).
-- The **AWS CloudFormation** template YAML file.
-- Once you're finished, submit a PR to this repo with your email in a commit message.
-- The email should be the same as your email in the CV/Resume.
+### Live reloading and Sass CSS compilation
+
+Moved to [Live reloading and SASS compilation](https://cookiecutter-django.readthedocs.io/en/latest/2-local-development/developing-locally.html#using-webpack-or-gulp).
+
+## Deployment
+
+The following details how to deploy this application.
+
+### Docker
+
+See detailed [cookiecutter-django Docker documentation](https://cookiecutter-django.readthedocs.io/en/latest/3-deployment/deployment-with-docker.html).

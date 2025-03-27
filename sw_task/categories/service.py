@@ -1,6 +1,6 @@
 import uuid
 
-from sw_task.categories.exceptions import CategoryNotFoundException
+from sw_task.categories.exceptions import CategoryNotFoundError
 from sw_task.categories.models import Category
 
 
@@ -15,15 +15,14 @@ class CategoriesService:
     def get_model(self) -> Category:
         """Return the model associated with this service."""
         return self.model
-    
+
     def create_initial_categories(self) -> list[Category]:
         """Create initial categories if none exist."""
         model = self.get_model()
         if not model.objects.exists():
             initial_categories = ["Category A", "Category B"]
             for name in initial_categories:
-                model.objects.create(name=name) 
-
+                model.objects.create(name=name)
 
     def create_categories(self, validated_data: list[dict]) -> list[Category]:
         """Create multiple categories while avoiding duplicates."""
@@ -43,7 +42,7 @@ class CategoriesService:
         try:
             return model.objects.get(id=category_id)
         except model.DoesNotExist:
-            raise CategoryNotFoundException from None
+            raise CategoryNotFoundError from None
 
     def get_categories(self) -> list[Category]:
         """Retrieve all root categories (categories with no parent)."""
@@ -62,14 +61,14 @@ class CategoriesService:
 
         subcategories = []
         subcategory_names = [
-                f"SUB {parent.name}-1",
-                f"SUB {parent.name}-2"
-            ]
+            f"SUB {parent.name}-1",
+            f"SUB {parent.name}-2",
+        ]
         for name in subcategory_names:
             # If subcategory with this name already exists, change the name
             if model.objects.filter(name=name).exists():
                 name = f"SUB {name}"
-                
+
             subcategory = model.objects.create(parent=parent, name=name)
             subcategories.append(subcategory)
         return subcategories

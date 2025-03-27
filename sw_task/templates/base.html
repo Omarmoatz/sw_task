@@ -32,13 +32,11 @@
     ================================================== -->
     {# Placed at the top of the document so pages load faster with defer #}
     {% block javascript %}
-    <!-- jQuery JS -->
+      <!-- jQuery JS -->
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"
-          integrity="sha384-UG8ao2jwOWB7/oDdObZc6ItJmwUkR/PfMyt9Qs5AwX7PsnYn1CRKCTWyncPTWvaS"
-          crossorigin="anonymous"></script>
-
-    
-    <!-- Bootstrap JS -->
+              integrity="sha384-UG8ao2jwOWB7/oDdObZc6ItJmwUkR/PfMyt9Qs5AwX7PsnYn1CRKCTWyncPTWvaS"
+              crossorigin="anonymous"></script>
+      <!-- Bootstrap JS -->
       <script defer
               src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.min.js"
               integrity="sha512-1/RvZTcCDEUjY/CypiMz+iqqtaoQfAITmNSJY17Myp4Ms5mdxPS5UV7iOfdZoxcGhzFbOm6sntTKJppjvuhg4g=="
@@ -119,12 +117,9 @@
     <!-- /container -->
     {% block modal %}
     {% endblock modal %}
-
-      <script>
-        document.cookie = "csrftoken={{ csrf_token }}";
-      </script>
-  
-
+    <script>
+      document.cookie = "csrftoken={{ csrf_token }}";
+    </script>
     {% block inline_javascript %}
     {% endblock inline_javascript %}
   </body>

@@ -1,6 +1,6 @@
 import uuid
 
-from sw_task.categories.exception import CategoryNotFoundException
+from sw_task.categories.exceptions import CategoryNotFoundException
 from sw_task.categories.models import Category
 
 
@@ -15,6 +15,15 @@ class CategoriesService:
     def get_model(self) -> Category:
         """Return the model associated with this service."""
         return self.model
+    
+    def create_initial_categories(self) -> list[Category]:
+        """Create initial categories if none exist."""
+        model = self.get_model()
+        if not model.objects.exists():
+            initial_categories = ["Category A", "Category B"]
+            for name in initial_categories:
+                model.objects.create(name=name) 
+
 
     def create_categories(self, validated_data: list[dict]) -> list[Category]:
         """Create multiple categories while avoiding duplicates."""
@@ -44,19 +53,24 @@ class CategoriesService:
     def create_subcategories(
         self,
         parent_id: uuid.UUID,
-        validated_data: list[dict],
     ) -> list[Category]:
         """
         Create subcategories for a given parent category while avoiding duplicates.
         """
         parent = self.get_category(parent_id)
-        subcategories = []
         model = self.get_model()
-        for item in validated_data:
-            # If subcategory with this name already exists, skip it
-            if model.objects.filter(name=item["name"]).exists():
-                continue
-            subcategory = model.objects.create(parent=parent, **item)
+
+        subcategories = []
+        subcategory_names = [
+                f"SUB {parent.name}-1",
+                f"SUB {parent.name}-2"
+            ]
+        for name in subcategory_names:
+            # If subcategory with this name already exists, change the name
+            if model.objects.filter(name=name).exists():
+                name = f"SUB {name}"
+                
+            subcategory = model.objects.create(parent=parent, name=name)
             subcategories.append(subcategory)
         return subcategories
 

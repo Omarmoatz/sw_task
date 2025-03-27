@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from mptt.models import MPTTModel
 from mptt.models import TreeForeignKey
@@ -11,6 +13,7 @@ class Category(MPTTModel):
     It is useful for representing nested categories in an efficient way.
     """
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     parent = TreeForeignKey(
         "self",

@@ -1,6 +1,7 @@
 # ruff: noqa: ERA001, E501
 """Base settings to build other settings files upon."""
 
+from datetime import timedelta
 from pathlib import Path
 
 import environ
@@ -77,12 +78,16 @@ THIRD_PARTY_APPS = [
     "allauth.account",
     "allauth.mfa",
     "allauth.socialaccount",
+
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "corsheaders",
+    "drf_spectacular",
 ]
 
 LOCAL_APPS = [
     "sw_task.users",
     "sw_task.categories",
-    # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -283,5 +288,38 @@ SOCIALACCOUNT_FORMS = {"signup": "sw_task.users.forms.UserSocialSignupForm"}
 INSTALLED_APPS += ["compressor"]
 STATICFILES_FINDERS += ["compressor.finders.CompressorFinder"]
 
-# Your stuff...
+# django-rest-framework
+# -------------------------------------------------------------------------------
+# django-rest-framework - https://www.django-rest-framework.org/api-guide/settings/
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    # "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
+}
+
+# django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
+CORS_URLS_REGEX = r"^/api/.*$"
+
+
+# By Default swagger ui is available only to admin user(s). You can change permission classes to change that
+# See more configuration options at https://drf-spectacular.readthedocs.io/en/latest/settings.html#settings
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Unlimited Categories",
+    "DESCRIPTION": "Documentation of API endpoints of Unlimited Categories",
+    "VERSION": "1.0.0",
+    "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
+    "SCHEMA_PATH_PREFIX": "/api/",
+}
+
+# SIMPLE_JWT
 # ------------------------------------------------------------------------------
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=7),  # Token expiration time
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": True,
+    # 'AUTH_HEADER_TYPES': ('Bearer',),
+}

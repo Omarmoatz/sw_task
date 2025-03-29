@@ -56,9 +56,11 @@ class CategoriesService:
         """
         Create subcategories for a given parent category while avoiding duplicates.
         """
+        print("*"*100)
         parent = self.get_category(parent_id)
         model = self.get_model()
 
+        print(model, parent)
         subcategories = []
         subcategory_names = [
             f"SUB {parent.name}-1",
@@ -69,7 +71,9 @@ class CategoriesService:
             if model.objects.filter(name=name).exists():
                 name = f"SUB {name}"
 
+            print(name)
             subcategory = model.objects.create(parent=parent, name=name)
+            print("subcategories", subcategories)
             subcategories.append(subcategory)
         return subcategories
 

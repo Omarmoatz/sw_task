@@ -1,14 +1,5 @@
 function getCSRFToken() {
-    let cookieValue = null;
-    let cookies = document.cookie.split("; ");
-    for (let i = 0; i < cookies.length; i++) {
-        let parts = cookies[i].split("=");
-        if (parts[0] === "csrftoken") {
-            cookieValue = decodeURIComponent(parts[1]);
-            break;
-        }
-    }
-    return cookieValue;
+    return document.querySelector('meta[name="csrf-token"]')?.getAttribute("content");
 }
 
 $(document).on("change", ".category-checkbox", function () {
@@ -46,6 +37,7 @@ $(document).on("change", ".category-checkbox", function () {
                         data: JSON.stringify({
                             parent_id: categoryId
                         }),
+                        xhrFields: { withCredentials: true }, // Include credentials
                         success: function (newData) {
                             let html = `<div class="subcategory-group">`;
                             $.each(newData.categories, function (index, subcategory) {

@@ -5,17 +5,48 @@ from django.urls import include
 from django.urls import path
 from django.views import defaults as default_views
 
+from drf_spectacular.views import SpectacularAPIView
+from drf_spectacular.views import SpectacularSwaggerView
+from rest_framework.authtoken.views import obtain_auth_token
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
+
+
+
 urlpatterns = [
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
     path("users/", include("sw_task.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
-    path("api/", include("categories.urls")),
+
+    path("", include("sw_task.categories.urls")),
+
+    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
 
+
+# API URLS
+urlpatterns += [
+    # API base url
+    path("api/", include("sw_task.categories.urls")),
+
+    # DRF auth token
+    # path("api/auth-token/", obtain_auth_token),
+    path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
+    path(
+        "api/docs/",
+        SpectacularSwaggerView.as_view(url_name="api-schema"),
+        name="api-docs",
+    ),
+]
 
 if settings.DEBUG:
     # This allows the error pages to be debugged during development, just visit

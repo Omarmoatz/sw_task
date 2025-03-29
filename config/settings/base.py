@@ -323,3 +323,5 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
     # 'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://127.0.0.1:8000"]

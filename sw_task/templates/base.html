@@ -6,6 +6,8 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
     <title>
       {% block title %}
         sw_task
@@ -117,9 +119,7 @@
     <!-- /container -->
     {% block modal %}
     {% endblock modal %}
-    <script>
-      document.cookie = "csrftoken={{ csrf_token }}";
-    </script>
+    
     {% block inline_javascript %}
     {% endblock inline_javascript %}
   </body>

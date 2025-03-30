@@ -10,13 +10,13 @@ $(document).on("change", ".category-checkbox", function () {
 
     if (checkbox.is(":checked")) {
         $.ajax({
-            url: "/api/categories/",
+            url: "/api/v2/categories/",
             data: { parent_id: categoryId },
             dataType: "json",
             success: function (data) {
-                if (data.categories.length > 0) {
+                if (data.count > 0) {
                     let html = `<div class="subcategory-group">`;
-                    $.each(data.categories, function (index, subcategory) {
+                    $.each(data.results, function (index, subcategory) {
                         html += `
                             <div class="ms-4">
                                 <input type="checkbox" class="category-checkbox" data-category-id="${subcategory.id}">
@@ -30,7 +30,7 @@ $(document).on("change", ".category-checkbox", function () {
                 } else {
                     // No subcategories found, create two new ones
                     $.ajax({
-                        url: "/api/categories/",
+                        url: "/api/v2/categories/",
                         method: "POST",
                         contentType: "application/json",
                         headers: { "X-CSRFToken": getCSRFToken() },
@@ -40,7 +40,7 @@ $(document).on("change", ".category-checkbox", function () {
                         xhrFields: { withCredentials: true }, // Include credentials
                         success: function (newData) {
                             let html = `<div class="subcategory-group">`;
-                            $.each(newData.categories, function (index, subcategory) {
+                            $.each(newData, function (index, subcategory) {
                                 html += `
                                     <div class="ms-5">
                                         <input type="checkbox" class="category-checkbox" data-category-id="${subcategory.id}">

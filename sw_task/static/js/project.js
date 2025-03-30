@@ -15,6 +15,7 @@ $(document).on("change", ".category-checkbox", function () {
             dataType: "json",
             success: function (data) {
                 if (data.count > 0) {
+                    // fetch the subcategories if there is any 
                     let html = `<div class="subcategory-group">`;
                     $.each(data.results, function (index, subcategory) {
                         html += `
@@ -37,7 +38,7 @@ $(document).on("change", ".category-checkbox", function () {
                         data: JSON.stringify({
                             parent_id: categoryId
                         }),
-                        xhrFields: { withCredentials: true }, // Include credentials
+                        xhrFields: { withCredentials: true },
                         success: function (newData) {
                             let html = `<div class="subcategory-group">`;
                             $.each(newData, function (index, subcategory) {

@@ -48,6 +48,11 @@ class CategoriesService:
         """Retrieve all root categories (categories with no parent)."""
         model = self.get_model()
         return model.objects.filter(parent=None)
+    
+    def get_all_sub_categories(self) -> list[Category]:
+        """Retrieve all root sub categories (categories with any parent)."""
+        model = self.get_model()
+        return model.objects.filter(parent__isnull=False)
 
     def create_subcategories(
         self,
@@ -120,3 +125,9 @@ class CategoriesService:
             subcategories = self.create_subcategories(parent_id, validated_data)
             return self.get_subcategories(parent_id, values)
         return subcategories
+
+    def delete_all_subcategories(self):
+        """delete all the sub categories"""
+        categories = self.get_all_sub_categories()
+        for ctg in categories:
+            ctg.delete()

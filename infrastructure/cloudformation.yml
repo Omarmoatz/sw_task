@@ -1,0 +1,119 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  CloudFormation Template to launch an EC2 instance with an admin IAM role,
+  deploy the Category Checker project using Docker Compose, and enable SSH, HTTP, and HTTPS access.
+
+Parameters:
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance.
+    Type: AWS::EC2::KeyPair::KeyName
+
+  InstanceType:
+    Description: EC2 instance type.
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - t3.micro
+    ConstraintDescription: Must be a valid EC2 instance type.
+
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: VPC Id.
+
+  SubnetId:
+    Type: AWS::EC2::Subnet::Id
+    Description: Subnet Id.
+
+  LatestAmiId:
+    Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+    Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
+    # Dynamically fetches the latest Amazon Linux 2 AMI ID for the region.
+
+Resources:
+  # Security group to allow SSH, HTTP, and HTTPS access
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH, HTTP, and HTTPS access.
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0  # Allows SSH access from anywhere (should be restricted for security)
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0  # Allows HTTP access from anywhere
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0  # Allows HTTPS access from anywhere
+
+  # IAM Role for EC2 instance with administrator access
+  EC2InstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess  # Grants full access to AWS services
+
+  # Instance Profile to attach IAM role to EC2 instance
+  EC2InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: "/"
+      Roles:
+        - !Ref EC2InstanceRole
+
+  # EC2 instance with Docker and Docker Compose setup
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyName
+      ImageId: !Ref LatestAmiId  # Fetches the latest Amazon Linux 2 AMI dynamically
+      IamInstanceProfile: !Ref EC2InstanceProfile
+      SecurityGroupIds:
+        - !Ref InstanceSecurityGroup
+      SubnetId: !Ref SubnetId
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          # Update system packages
+          yum update -y
+
+          # Install Docker
+          amazon-linux-extras install docker -y
+          service docker start
+          usermod -a -G docker ec2-user  # Add ec2-user to the Docker group
+
+          # Install Docker Compose
+          curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          chmod +x /usr/local/bin/docker-compose
+
+          # Install Git and clone the project repository
+          yum install -y git
+          cd /home/ec2-user
+          git clone https://github.com/Omarmoatz/sw_task/
+          cd sw_task
+
+          # Start the application using Docker Compose
+          docker-compose up -d
+
+Outputs:
+  InstancePublicIP:
+    Description: Public IP address of the EC2 instance.
+    Value: !GetAtt EC2Instance.PublicIp
+
+  WebsiteURL:
+    Description: URL for accessing the application.
+    Value: !Sub "http://${EC2Instance.PublicDnsName}"

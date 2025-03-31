@@ -8,7 +8,6 @@ from django.views.decorators.csrf import csrf_exempt
 
 from sw_task.categories.service import CategoriesService
 
-
 class HomeView(View):
     def get(self, request):
         """

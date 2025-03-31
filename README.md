@@ -1,65 +1,84 @@
 ![alt text](https://rightshero.com/wp/wp-content/uploads/2024/04/RightsHero-Logo.png)
 
+# Category Checker - Local Setup Guide
 
-# Software Engineer Task Assessment
+## Overview
+This project is a category management system that dynamically generates subcategories based on user interactions. The application is built using **Django** and **Docker**, making it easy to set up and run locally.
 
-This role will be part of the Rightshero software development team.
+## Prerequisites
+Ensure you have the following installed on your machine:
+- **Docker** & **Docker Compose** ([Installation Guide](https://docs.docker.com/get-docker/))
+- **Git** ([Installation Guide](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git))
+- **Make** (Optional but recommended for running commands easily)
 
-As a software engineer you are a part of a small but very efficient and multi-tasking team. 
+## Installation Steps
 
-The team is tasked with handling all the software aspects of our service.
+### 1. Clone the Repository
+```sh
+git clone https://github.com/Omarmoatz/sw_task.git
+cd category-checker
+```
 
-# The task
-The task will be a **project** and **AWS CloudFormation** template:
+### 2. Create an `.env` File
+Copy the example environment file and modify it as needed:
+```sh
+cp .env.example .env
+```
+Ensure that the `.env` file contains the necessary configurations such as database credentials.
 
-## [1] The project:
-A project contains one page have a 2 categories checkboxes
+### 3. Build and Run the Project
+Run the following command to build and start the services using Docker:
+```sh
+docker-compose up --build -d
+```
+This will:
+- Start the **PostgreSQL** database
+- Start the **Django** backend
+- Set up all necessary dependencies
 
-- [ ] Category A
-- [ ] Category B
+### 4. Apply Migrations & Create a Superuser
+Run the following commands inside the Django container:
+```sh
+docker compose run --rm django python manage.py makemigrations
+docker compose run --rm django python manage.py migrate
+docker compose run --rm django python manage.py createsuperuser
+```
+Follow the prompts to create an admin user.
 
-Unlimited subcategories of parent category (if it is hard to achieve the unlimited levels, you can set 3 levels hard-coded)
-Should use Ajax.
+### 5. Access the Application
+- **Backend API:** `http://localhost:8000/api/docs`
+- **Home Page:** `http://localhost:8000` or `http://127.0.0.1:8000` 
+- **Admin Panel:** `http://localhost:8000/admin/` (Use the superuser credentials you created)
 
-### Example
-- [ ] Category A
-- [ ] Category B
+### 6. Running Tests
+To ensure everything is working correctly, run the test suite:
+```sh
+docker-compose exec web pytest
+```
 
-If user select “Category B”
-The system will create another 2 checkboxes with
+## Stopping the Application
+To stop the running containers, use:
+```sh
+docker-compose down
+```
 
-- [ ] SUB Category B1
-- [ ] SUB Category B2
+## Troubleshooting
+### 1. Checking Logs
+If you encounter issues, check the logs with:
+```sh
+docker-compose logs -f
+```
+### 2. Restarting the Application
+Sometimes, restarting the application resolves issues:
+```sh
+docker-compose down && docker-compose up --build -d
+```
 
-Selecting Sub Category B2 will create another 2 checkboxes
+## Contributing
+If you'd like to contribute, please fork the repository and submit a pull request.
 
-- [ ] SUB SUB Category B2-1
-- [ ] SUB SUB Category B2-2
- And so on
+## License
+This project is licensed under the MIT License.
 
-
-## [2] AWS CloudFormation
-An AWS CloudFormation template YAML file for:
-- Launch a t2.micro or t3.micro EC2 instance
-- Create IAM role with admin privileges
-- Attach the IAM role to the EC2 instance created earlier
-- Deploy the project on the EC2 instance
-- The instance should be accessable via SSH, HTTP and HTTPS protocols/ports
-
-
-# Notes
-- We would be scoring for the below aspects of the assignment:
-- DB,Architecture /Code (preferred MVC pattern), Security, Git
-- You could use a framework to create the project from scratch (Django).
-- You should use MySQL or Postgresql Databases.
-- Please use one table design in the database for all categories and subs.
-- The code should contain comments with important information.
-- README file for run the project locally.
-- The **AWS CloudFormation** template file.
-
-
-# Deliverables
-- The project should be ready with docker compose (web service + DB).
-- The **AWS CloudFormation** template YAML file.
-- Once you're finished, submit a PR to this repo with your email in a commit message.
-- The email should be the same as your email in the CV/Resume.
+---
+For any issues or questions, please open a GitHub issue in the repository.

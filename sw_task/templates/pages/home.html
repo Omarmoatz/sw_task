@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <div class="category-card">
+          <h3 class="text-center mb-4">Category Selector</h3>
+          <div id="categories">
+            <div id="category-container">
+              {% for category in categories %}
+                <div>
+                  <input type="checkbox"
+                         class="category-checkbox"
+                         data-category-id="{{ category.id }}" />
+                  <label>{{ category.name }}</label>
+                  <div class="subcategories"></div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
